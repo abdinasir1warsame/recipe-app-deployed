@@ -7,10 +7,8 @@ import {
   planIcon,
   showMoreIcon,
 } from '../../../shared/icons';
-
 import AddToPlanner from './addToPlan';
-
-const TopSection = ({ user, recipe, recipeData, database }) => {
+export default function TopSection({ recipe, imageUrl }) {
   const [successMessage2, setSuccessMessage2] = useState('');
   // Function to add recipe to Firestore
   const addRecipeToFirestore = async () => {
@@ -41,7 +39,7 @@ const TopSection = ({ user, recipe, recipeData, database }) => {
       const recipeDoc = {
         recipeId: recipe,
         title: recipeData.title,
-        image: recipeData.image,
+        image: imageUrl,
         summary: recipeData.summary,
         servings: recipeData.servings,
         userId: user.uid, // Associate recipe with the current user
@@ -59,10 +57,9 @@ const TopSection = ({ user, recipe, recipeData, database }) => {
       setSuccessMessage2('Failed to add recipe to cook book.');
     }
   };
-
   return (
     <>
-      <div className="  px-2 lg:px-8 lg:py-8 flex justify-between">
+      <div className="px-2 lg:px-8 py-8 flex justify-between">
         <button
           onClick={addRecipeToFirestore}
           className="btn btn-xs sm:btn-sm md:btn-md lg:btn-md flex gap-2"
@@ -72,43 +69,29 @@ const TopSection = ({ user, recipe, recipeData, database }) => {
         <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-md flex gap-2">
           {shareIcon} Share
         </button>
-        <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-md flex gap-2">
-          {planIcon}{' '}
-          <AddToPlanner
-            recipeData={recipeData}
-            className="px-4 py-2 text-lg font-semibold btn btn-md rounded-lg transition flex gap-3"
-            text="Meal Planner"
-          />
-        </button>
+        <AddToPlanner recipe={recipe} />
         <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-md flex gap-2">
           {showMoreIcon}
         </button>
       </div>
-      <div className="flex justify-center w- full">
-        {successMessage2 && (
-          <div
-            role="alert"
-            className=" w-1/2 alert alert-success backdrop-blur bg-black/40 text-white text-lg flex justify-center"
+      {successMessage2 && (
+        <div role="alert" className="alert alert-success flex justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{successMessage2}</span>
-          </div>
-        )}
-      </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{successMessage2}</span>
+        </div>
+      )}
     </>
   );
-};
-
-export default TopSection;
+}

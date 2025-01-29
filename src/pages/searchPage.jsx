@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PopularRecipes from '../assets/components/searchPage/popularRecipes';
@@ -7,7 +7,6 @@ import SearchBar from '../assets/components/searchPage/searchBar'; // Import Sea
 
 export default function SearchPage() {
   const [searchParam, setSearchParam] = useState('');
-
   const [filtersState, setFiltersState] = useState({
     diet: [],
     intolerance: [],
@@ -18,24 +17,24 @@ export default function SearchPage() {
     rating: [],
   });
   const navigate = useNavigate();
-  const apiKey2 = '946a357cab384d79abab5cadbb627684';
-  const apiKey = '09f77a001bc540d4999c4f79fc69106f';
   const apiKey3 = '74a1a3dced1b4192a47805e76e6bbcae';
 
   // API call for searched recipes
-  async function fetchRecipeData(query, filters) {
+  async function fetchRecipeData(query, filters = {}) {
     const filterParams = [];
 
-    // Loop through each filter category in filtersState and build the query string
-    Object.keys(filters).forEach((category) => {
-      filters[category].forEach((option) => {
-        filterParams.push(`${category}=${encodeURIComponent(option)}`);
+    // Build filter query only if filters are provided
+    if (filters && typeof filters === 'object') {
+      Object.keys(filters).forEach((category) => {
+        filters[category].forEach((option) => {
+          filterParams.push(`${category}=${encodeURIComponent(option)}`);
+        });
       });
-    });
-    console.log('Filters:', filters);
+    }
+
     const filterQuery =
       filterParams.length > 0 ? `&${filterParams.join('&')}` : '';
-    const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey3}&query=${query}&addRecipeInformation=true&number=20${filterQuery}`;
+    const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey3}&query=${query}&addRecipeInformation=true&number=100${filterQuery}`;
 
     try {
       const response = await fetch(url);
@@ -49,29 +48,31 @@ export default function SearchPage() {
     }
   }
 
-  // Param for API call
+  // Triggered when searching via SearchBar
   const search = async () => {
     const query = searchParam.trim() || ''; // If no query, use an empty string
 
-    // Fetch the recipe data, passing both query and filters
-    const data = await fetchRecipeData(query, filtersState);
-
-    if (data) {
-      navigate('/recipes', {
-        state: { recipeData: data, searchParam: query }, // Pass empty query if no query provided
-      });
-    }
-
-    setSearchParam(''); // Reset the search parameter after searching
-  };
-
-  // API triggered by category click
-  const handleCategoryClick = async (category) => {
     try {
-      const data = await fetchRecipeData(category); // Use the clicked category as the query
+      const data = await fetchRecipeData(query, filtersState); // Pass filtersState for full search
       if (data) {
         navigate('/recipes', {
-          state: { recipeData: data, searchParam: category }, // Pass the category name as the searchParam
+          state: { recipeData: data, searchParam: query },
+        });
+      }
+      setSearchParam(''); // Reset the search parameter after searching
+    } catch (error) {
+      console.error('Error executing search:', error);
+    }
+  };
+
+  // Triggered when clicking on a category
+  const handleCategoryClick = async (category) => {
+    console.log('Category clicked:', category);
+    try {
+      const data = await fetchRecipeData(category); // Omit filters for category-based searches
+      if (data) {
+        navigate('/recipes', {
+          state: { recipeData: data, searchParam: category },
         });
       }
     } catch (error) {

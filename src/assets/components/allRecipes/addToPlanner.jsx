@@ -7,20 +7,19 @@ import {
   where,
 } from 'firebase/firestore';
 import { database } from '../../../assets/googleSignin/config';
-
+import { addRecipeIcon, planIcon } from '../../../shared/icons';
 import { userAuth } from '../../../context/AuthContext';
 
-export default function AddToPlanner({ recipeData, className, text }) {
+export default function AddToPlanner({ recipe }) {
   const [selectedMeal, setSelectedMeal] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const [next7Days, setNext7Days] = useState([]);
   const [usedMeals, setUsedMeals] = useState([]);
 
   const { user } = userAuth();
   const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
-
+  function showRecipe() {}
   // Generate the next 7 days
   const getNext7Days = () => {
     const days = [];
@@ -59,6 +58,7 @@ export default function AddToPlanner({ recipeData, className, text }) {
   }, [selectedDate, user]);
 
   const openModal = (recipe) => {
+    console.log('Recipe passed to modal:', recipe);
     document.getElementById('my_modal_3').showModal();
   };
 
@@ -70,30 +70,26 @@ export default function AddToPlanner({ recipeData, className, text }) {
       return;
     }
     // Transform recipeData into the required format
-    const recipe = {
-      id: recipeData.id,
-      image: recipeData.image,
-      sourceUrl: recipeData.sourceUrl,
-      title: recipeData.title,
+    const recipeData = {
+      id: recipe.id,
+      image: recipe.image,
+      sourceUrl: recipe.sourceUrl,
+      title: recipe.title,
     };
     try {
       await addDoc(collection(database, 'planner'), {
         date: selectedDate,
         meal: selectedMeal,
-        recipe: recipe,
+        recipe: recipeData,
         userId: user.uid,
         createdAt: new Date(),
       });
       document.getElementById('my_modal_3').close();
       setSelectedMeal('');
       setSelectedDate('');
-      setSuccessMessage('Recipe successfully added to planner!');
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 2000);
+      console.log('success');
     } catch (error) {
       console.error('Error adding to planner:', error);
-      setSuccessMessage('Failed to add recipe to planner.');
     }
   };
 
@@ -101,37 +97,19 @@ export default function AddToPlanner({ recipeData, className, text }) {
 
   return (
     <>
-      <div className=" relative px-3">
-        <button onClick={openModal} className={className}>
-          <span className="">{text}</span>
-        </button>
-        <div className="flex justify-center w-full">
-          {successMessage && (
-            <div
-              role="alert"
-              className="  alert alert-success backdrop-blur bg-black/40 text-white text-lg flex justify-center mb-5 mt-5"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{successMessage}</span>
-            </div>
-          )}
-        </div>
-        <dialog
-          id="my_modal_3"
-          className="modal backdrop-blur bg-black/40 px-5"
+      <div className="relative ">
+        <button
+          onClick={() => {
+            openModal(recipe);
+            showRecipe(recipe);
+          }}
+          className="btn btn-xs flex gap-2 hover:text-white hover:opacity-100"
         >
+          {planIcon}
+          Planner
+        </button>
+
+        <dialog id="my_modal_3" className="modal backdrop-blur bg-black/40">
           <div className="modal-box backdrop-blur-md bg-black/50 z-2 border border-gray-300 h-[65%] overflow-visible text-start text-left space-y-4">
             <form method="dialog">
               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -173,7 +151,7 @@ export default function AddToPlanner({ recipeData, className, text }) {
               </div>
             </div>
 
-            <div className="py-3 space-y-4  text-white text-lg">
+            <div className="py-3 space-y-2  text-white text-lg">
               <h2>Meal Type</h2>
               <div className="dropdown w-full text-white">
                 <div

@@ -5,7 +5,7 @@ export default function Categories({ handleCategoryClick }) {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl">Categories</h1>
-      <div className=" grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
+      <div className=" grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 ml-10 lg:ml-0">
         {Recipes.sort().map((recipe, index) => (
           <div
             key={recipe.id}

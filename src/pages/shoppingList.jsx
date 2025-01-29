@@ -44,7 +44,7 @@ export default function ShoppingListPage() {
           <p className="text-2xl text-gray-600">{user.displayName}'s</p>
           <h1 className="text-4xl font-bold ">Shopping List</h1>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4    gap-16 px-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4    gap-16 lg:px-5">
           {ingredients.length > 0 ? (
             ingredients.map((ingredient) => {
               const imageUrl = `https://img.spoonacular.com/ingredients_100x100/${ingredient.image

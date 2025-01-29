@@ -47,7 +47,6 @@ export default function PlannerButton({ date, user, index, groupedPlanner }) {
 
     try {
       const query = searchParam.trim();
-      console.log('Searching for:', query);
 
       // Fetch recipe data with the query
       const recipes = await fetchRecipeData(query);

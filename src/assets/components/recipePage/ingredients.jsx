@@ -19,13 +19,11 @@ const Ingredients = ({
   const toFraction = (amount) => new Fraction(amount).toFraction(true);
   const [successMessage, setSuccessMessage] = useState('');
   const addToShoppingList = async () => {
-    console.log('Selected Ingredients:', selectedIngredients);
     if (!user) {
       setSuccessMessage('You must be logged in to add a recipe.');
       return;
     }
 
-    console.log('Selected Ingredients:', selectedIngredients);
     if (!selectedIngredients || selectedIngredients.length === 0) {
       console.log('No ingredients selected.');
       return; // Prevent further processing if no ingredients are selected
@@ -117,11 +115,11 @@ const Ingredients = ({
         </ul>
 
         {/* Add to shopping list button */}
-        <div className=" gap-5 items-center py-10">
+        <div className=" gap-5 items-center py-10 space-y-4">
           {successMessage && (
             <div
               role="alert"
-              className="alert alert-success flex justify-center"
+              className="alert alert-success backdrop-blur bg-black/40 text-white text-lg flex justify-center"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

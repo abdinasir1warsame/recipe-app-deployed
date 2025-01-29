@@ -16,6 +16,7 @@ const ProfileSection = () => {
   const [totalIngredients, setTotalIngredients] = useState('');
   const [totalPlanner, setTotalPlanner] = useState('');
   const [totalRecipes, setTotalRecipes] = useState('');
+  const [totalAiGenerated, setTotalAiGenerated] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,32 +26,38 @@ const ProfileSection = () => {
         const ingredientsRef = collection(database, 'ingredients');
         const plannerRef = collection(database, 'planner');
         const recipesRef = collection(database, 'recipes');
+        const aiGeneratedRef = collection(database, 'aiGenerated');
 
-        const userQuery = (ref) => query(ref, where('userId', '==', user.uid));
+        // Adjusted query for aiGenerated collection
+        const userQuery = (ref, field = 'userId') =>
+          query(ref, where(field, '==', user.uid));
 
-        const [ingredientsSnap, plannerSnap, recipesSnap] = await Promise.all([
-          getDocs(userQuery(ingredientsRef)),
-          getDocs(userQuery(plannerRef)),
-          getDocs(userQuery(recipesRef)),
-        ]);
+        const [ingredientsSnap, plannerSnap, recipesSnap, aiGeneratedSnap] =
+          await Promise.all([
+            getDocs(userQuery(ingredientsRef)),
+            getDocs(userQuery(plannerRef)),
+            getDocs(userQuery(recipesRef)),
+            getDocs(userQuery(aiGeneratedRef, 'generatedBy')), // Changed here
+          ]);
 
         // Convert snapshots to arrays
         const ingredients = ingredientsSnap.docs.map((doc) => doc.data());
         const planner = plannerSnap.docs.map((doc) => doc.data());
         const recipes = recipesSnap.docs.map((doc) => doc.data());
+        const aiGenerated = aiGeneratedSnap.docs.map((doc) => doc.data());
 
         setTotalIngredients(ingredients.length);
         setTotalPlanner(planner.length);
         setTotalRecipes(recipes.length);
+        setTotalAiGenerated(aiGenerated.length);
 
         // Example: Calculate arrays and active days
         const dataSummary = {
           totalIngredients: ingredients.length,
           totalPlanner: planner.length,
           totalRecipes: recipes.length,
+          totalAiGenerated: aiGenerated.length,
         };
-
-        console.log('Data Summary:', dataSummary);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -109,7 +116,7 @@ const ProfileSection = () => {
               className="radial-progress text-primary"
               style={{ '--value': 90 }}
             >
-              2/10
+              {totalAiGenerated}/10
             </div>
             <p className="mt-2 text-gray-300">Total Recipes</p>
           </div>

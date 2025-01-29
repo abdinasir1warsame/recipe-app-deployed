@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import appImg from '../../images/app-mochup1.png';
 import appImg2 from '../../images/app-mockup2.png';
 import { userAuth } from '../../../context/AuthContext';
@@ -7,6 +8,21 @@ import Register from '../../../pages/signup';
 
 export default function Banner() {
   const { user, logOut } = userAuth();
+  const location = useLocation();
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  // Check if the location state has openLoginModal set to true
+  useEffect(() => {
+    if (location.state?.openLoginModal) {
+      setIsLoginModalOpen(true);
+    }
+  }, [location.state]);
 
   const handleLogout = async () => {
     try {
@@ -15,10 +31,6 @@ export default function Banner() {
       console.error(error);
     }
   };
-
-  // State to manage separate modal visibility
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
@@ -35,54 +47,144 @@ export default function Banner() {
   const closeRegisterModal = () => {
     setIsRegisterModalOpen(false);
   };
-
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <>
-      {/* Navbar */}
-      <div className="fixed navbar bg-base-100 z-50 px-20 flex justify-between text-lg font-bold">
+      <nav className="fixed navbar bg-base-100 z-50 px-5 lg:px-10 xl:px-20 flex justify-between text-lg font-bold">
         <div className="flex gap-20">
           <div className="flex items-center gap-2 py-3">
-            <div className="rounded-full w-10 h-10 flex items-center justify-center">
+            <div className="rounded-full w-10 h-10 flex items-center justify-center text-white">
               <img
                 src="https://img.icons8.com/color/50/000000/food.png"
                 alt="Logo"
               />
             </div>
-            <h1 className="text-2xl font-bold">Flavor Layer</h1>
+            <h1 className="text-2xl font-bold text-white">Flavor Layer</h1>
           </div>
-          <div className="flex gap-10">
-            <div className="hover:border-b-[1px] cursor-pointer">Pricing</div>
-            <div className="hover:border-b-[1px] cursor-pointer">Meal Prep</div>
-            <div className="hover:border-b-[1px] cursor-pointer">
+          <div className="hidden lg:flex gap-10 text-white">
+            <Link
+              to={'./search'}
+              className="hover:border-b-[1px] cursor-pointer"
+            >
               Recipe Generator
+            </Link>
+            <div
+              onClick={() => scrollToSection('pricing')}
+              className="hover:border-b-[1px] cursor-pointer"
+            >
+              Pricing
+            </div>
+            <div
+              onClick={() => scrollToSection('faq')}
+              className="hover:border-b-[1px] cursor-pointer"
+            >
+              FAQ
             </div>
           </div>
         </div>
         {user ? (
           <button
             onClick={handleLogout}
-            className="btn btn-outline text-gray-300 text-lg font-bold"
+            className="hidden lg:flex btn btn-outline text-gray-300 text-lg font-bold text-white"
           >
             Log out
           </button>
         ) : (
-          <div className="flex gap-8">
+          <div className="hidden lg:flex gap-8">
             <button
               onClick={openLoginModal}
-              className="hover:border-b-[1px] cursor-pointer"
+              className="hover:border-b-[1px] cursor-pointer text-white"
             >
               Login
             </button>
             <button
               onClick={openRegisterModal}
-              className="btn btn-outline text-gray-300 text-lg font-bold"
+              className="btn btn-outline text-gray-300 text-lg font-bold text-white"
             >
               Get Started for free
             </button>
           </div>
         )}
-      </div>
+        <div className="lg:hidden">
+          <button
+            onClick={toggleMenu}
+            type="button"
+            className="p-2 rounded-md text-white hover:text-gray-300 focus:outline-none"
+          >
+            <svg
+              className="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {isMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+        {/* Mobile Menu Dropdown */}
+        {isMenuOpen && (
+          <div className="lg:hidden absolute top-16 right-0 w-full pb-4 bg-base-100 shadow-lg">
+            <div className="px-5 py-3 space-y-4">
+              <Link
+                to={'search'}
+                className="text-white hover:bg-gray-700 px-3 py-2 rounded-md"
+              >
+                Recipe Generator
+              </Link>
+              <div
+                onClick={() => scrollToSection('pricing')}
+                className="text-white hover:bg-gray-700 px-3 py-2 rounded-md"
+              >
+                Pricing
+              </div>
+              <div
+                onClick={() => scrollToSection('faq')}
+                className="text-white hover:bg-gray-700 px-3 py-2 rounded-md "
+              >
+                FAQ
+              </div>
 
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="text-lg border text-white hover:bg-gray-700 px-3 py-2 rounded-md"
+                >
+                  Log out
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={openLoginModal}
+                    className=" text-lg border text-white hover:bg-gray-700 px-3 py-2 rounded-md mb-5"
+                  >
+                    Get Started for free
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </nav>
       {/* Hero Section */}
       <div className="hero bg-base-200 min-h-screen mt-32 lg:mt-10">
         {/* Login Modal */}
@@ -169,7 +271,7 @@ export default function Banner() {
               </p>
               <button
                 onClick={openRegisterModal}
-                className="btn btn-md btn-outline text-lg sm:text-xl lg:text-2xl font-bold text-gray-300 px-8"
+                className="text-white btn btn-md btn-outline text-lg sm:text-xl lg:text-2xl font-bold text-gray-300 px-8"
               >
                 Get Started for free
               </button>

@@ -20,7 +20,6 @@ export default function NewRecipePage() {
   const [currentServings, setCurrentServings] = useState(1);
 
   useEffect(() => {
-    console.log('useEffect triggered');
     const apiKey3 = '74a1a3dced1b4192a47805e76e6bbcae';
     const url = `https://api.spoonacular.com/recipes/${recipe}/information?apiKey=${apiKey3}&includeNutrition=true`;
 
@@ -40,7 +39,6 @@ export default function NewRecipePage() {
 
     if (recipe) {
       fetchRecipeData();
-      console.log(recipe);
     } else {
       console.log('recipeId is invalid');
     }
@@ -48,7 +46,6 @@ export default function NewRecipePage() {
 
   const method = recipeData?.analyzedInstructions?.[0]?.steps || [];
   const ingredients = recipeData?.extendedIngredients || [];
-  console.log(ingredients);
 
   const handleIngredientCheck = (ingredient) => {
     setSelectedIngredients((prevSelected) => {
@@ -83,7 +80,7 @@ export default function NewRecipePage() {
         />
 
         {/* middle section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-2 lg:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-2 lg:p-8 py-10">
           <RecipeDetails
             recipeData={recipeData}
             setSuccessMessage={setSuccessMessage}

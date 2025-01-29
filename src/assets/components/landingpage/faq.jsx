@@ -41,7 +41,10 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-4 py-10 md:py-20 lg:py-40 px-8 lg:px-5">
+    <div
+      id="faq"
+      className=" mx-auto p-4 py-10 md:py-20 lg:py-40 px-10 sm:px-5 md:px-7 lg:px-20 xl:px-20"
+    >
       <div className="text-center py-5">
         <h2 className="text-primary text-md sm:text-xl lg:text-2xl font-bold">
           Everything You Should Know

@@ -122,7 +122,10 @@ export default function Features() {
   };
 
   return (
-    <div className="bg-base-200 px-10 sm:px-5 md:px-7 lg:px-20 xl:px-20 ">
+    <div
+      id="pricing"
+      className="bg-base-200 py-10 md:py-20  px-10 sm:px-5 mt-20 md:px-7 lg:px-20 xl:px-20 "
+    >
       {/* Features */}
       <div className="flex flex-col justify-center items-center">
         <div className="w-full md:w-2/3 xl:w-2/2 text-center lg:px-14 xl:px-20">

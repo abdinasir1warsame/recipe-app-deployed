@@ -9,7 +9,7 @@ import UserJourney from '../assets/components/landingpage/userJourney';
 export default function LandingPage() {
   return (
     <>
-      <div className="bg-base-200">
+      <div className="bg-base-200 text-white">
         <Banner />
         <UserJourney />
         <Features />

@@ -50,4 +50,25 @@
       /* Soft grey in the middle */ #dce2e8 100% /* Faded grey at the bottom */
     );
   }
+  .background {
+    background: radial-gradient(
+        ellipse farthest-corner at right bottom,
+        #142b3d 8%,
+        #102331 30%,
+        #142b3d 40%,
+        transparent 80%
+      ),
+      radial-gradient(
+        ellipse farthest-corner at left top,
+        #768a9d 8%,
+        #526a80 25%,
+        #1d3d55 62.5%,
+        #1d3d55 100%
+      );
+    color: white;
+
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.643);
+
+    text-shadow: 0 8px 16px rgba(10, 10, 10, 0.991);
+  }
 }
